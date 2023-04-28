@@ -125,6 +125,16 @@ function Teleport (mySprite: Sprite) {
             . . . . . . . b d b . . . . . . 
             . . . . . . . . . . . . . . . . 
             `)
+        music.play(music.createSoundEffect(
+        WaveShape.Triangle,
+        1,
+        3718,
+        0,
+        100 / spriteutils.distanceBetween(mySprite, mySprite),
+        500,
+        SoundExpressionEffect.Tremolo,
+        InterpolationCurve.Logarithmic
+        ), music.PlaybackMode.InBackground)
         timer.after(2000, function () {
             mySprite.follow(Player1, 30)
             mySprite.setImage(img`
@@ -158,7 +168,6 @@ function Teleport (mySprite: Sprite) {
     })
 }
 sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
-    music.play(music.melodyPlayable(music.buzzer), music.PlaybackMode.InBackground)
     for (let index = 0; index < 2; index++) {
         Enemy1 = sprites.create(img`
             ........................
@@ -186,8 +195,8 @@ sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
             ........................
             ........................
             `, SpriteKind.Enemy)
-        Teleport(Enemy1)
         tiles.placeOnRandomTile(Enemy1, assets.tile`transparency16`)
+        Teleport(Enemy1)
         Enemy1.follow(Player1, 30)
     }
 })
@@ -218,6 +227,7 @@ let projectile: Sprite = null
 let Enemy1: Sprite = null
 let Snack: Sprite = null
 let Chest: Sprite = null
+let mySprite: Sprite = null
 let Player1: Sprite = null
 let CameraSpeed = 0
 let speeds: number[] = []
@@ -226,6 +236,7 @@ let ranges: number[] = []
 let images2: Image[] = []
 let delays: number[] = []
 let mySprite3: Sprite = null
+let reload = false
 mySprite3 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
@@ -246,7 +257,6 @@ mySprite3 = sprites.create(img`
     `, SpriteKind.undefined)
 mySprite3.setFlag(SpriteFlag.RelativeToCamera, true)
 mySprite3.setPosition(136, 21)
-let reload = false
 reload = true
 delays = [
 1000,
@@ -474,7 +484,7 @@ Player1 = Render.getRenderSpriteVariable()
 Player1.x += 6
 tiles.placeOnTile(Player1, tiles.getTileLocation(6, 7))
 info.setLife(3)
-let mySprite = sprites.create(img`
+mySprite = sprites.create(img`
     . . . . . . . 9 9 . . . . . . . 
     . . . . . . . 9 9 . . . . . . . 
     . . . . . . . 9 9 . . . . . . . 
