@@ -3,17 +3,14 @@ namespace SpriteKind {
     export const Bomb = SpriteKind.create()
     export const Null = SpriteKind.create()
     export const undefined = SpriteKind.create()
+    export const Laser = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile0`, function (sprite, location) {
     info.changeScoreBy(20)
     game.over(true)
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (CameraSpeed == 5) {
-        CameraSpeed = 2
-    } else {
-        CameraSpeed = 5
-    }
+    Render.jumpWithHeightAndDuration(Player1, 42, 1000)
 })
 sprites.onOverlap(SpriteKind.Blast, SpriteKind.Enemy, function (sprite, otherSprite) {
     info.changeScoreBy(1)
@@ -78,6 +75,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 sprites.onDestroyed(SpriteKind.Blast, function (sprite) {
     music.play(music.melodyPlayable(music.smallCrash), music.PlaybackMode.InBackground)
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Laser, function (sprite, otherSprite) {
+    game.gameOver(false)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
     otherSprite.destroy(effects.confetti, 500)
     info.changeLifeBy(1)
@@ -92,8 +92,31 @@ function changeSpeed (speed: number, sprite: Sprite) {
     ty = speed * Math.sin(tdr)
     sprite.setVelocity(tx, ty)
 }
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    Render.jumpWithHeightAndDuration(Player1, 42, 1000)
+spriteutils.onSpriteKindUpdateInterval(SpriteKind.Enemy, 500, function (sprite) {
+    if (spriteutils.getSpritesWithin(SpriteKind.Player, 100, sprite).length > 0) {
+        projectile2 = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . 2 2 . . . . . . . 
+            . . . . . . . 2 2 . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, sprite, 0, 0)
+        projectile2.setKind(SpriteKind.Laser)
+        projectile2.setFlag(SpriteFlag.AutoDestroy, true)
+        spriteutils.setVelocityAtAngle(projectile2, spriteutils.angleFrom(mySprite, sprite) + randint(-25, 25), 200)
+        music.play(music.melodyPlayable(music.pewPew), music.PlaybackMode.InBackground)
+    }
 })
 info.onLifeZero(function () {
     game.over(false)
@@ -125,16 +148,6 @@ function Teleport (mySprite: Sprite) {
             . . . . . . . b d b . . . . . . 
             . . . . . . . . . . . . . . . . 
             `)
-        music.play(music.createSoundEffect(
-        WaveShape.Triangle,
-        1,
-        3718,
-        0,
-        100 / spriteutils.distanceBetween(mySprite, mySprite),
-        500,
-        SoundExpressionEffect.Tremolo,
-        InterpolationCurve.Logarithmic
-        ), music.PlaybackMode.InBackground)
         timer.after(2000, function () {
             mySprite.follow(Player1, 30)
             mySprite.setImage(img`
@@ -218,6 +231,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let mySprite2: Sprite = null
 let Image2: Image = null
+let projectile2: Sprite = null
 let ty = 0
 let tx = 0
 let tdr = 0
@@ -229,7 +243,6 @@ let Snack: Sprite = null
 let Chest: Sprite = null
 let mySprite: Sprite = null
 let Player1: Sprite = null
-let CameraSpeed = 0
 let speeds: number[] = []
 let blaster = 0
 let ranges: number[] = []
@@ -355,7 +368,7 @@ speeds = [
 200,
 300
 ]
-CameraSpeed = 6
+let CameraSpeed = 4
 let THRUSTER_VELOCITY = 200
 scene.setBackgroundImage(img`
     dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
