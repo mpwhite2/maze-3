@@ -76,7 +76,8 @@ sprites.onDestroyed(SpriteKind.Blast, function (sprite) {
     music.play(music.melodyPlayable(music.smallCrash), music.PlaybackMode.InBackground)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Laser, function (sprite, otherSprite) {
-    game.gameOver(false)
+    sprites.destroy(otherSprite)
+    info.changeLifeBy(-1)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
     otherSprite.destroy(effects.confetti, 500)
@@ -114,7 +115,7 @@ spriteutils.onSpriteKindUpdateInterval(SpriteKind.Enemy, 500, function (sprite) 
             `, sprite, 0, 0)
         projectile2.setKind(SpriteKind.Laser)
         projectile2.setFlag(SpriteFlag.AutoDestroy, true)
-        spriteutils.setVelocityAtAngle(projectile2, spriteutils.angleFrom(mySprite, sprite) + randint(-25, 25), 200)
+        spriteutils.setVelocityAtAngle(projectile2, spriteutils.angleFrom(mySprite, sprite) + randint(-15, 15), 80)
         music.play(music.melodyPlayable(music.pewPew), music.PlaybackMode.InBackground)
     }
 })
