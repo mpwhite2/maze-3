@@ -4,6 +4,7 @@ namespace SpriteKind {
     export const Null = SpriteKind.create()
     export const undefined = SpriteKind.create()
     export const Laser = SpriteKind.create()
+    export const Compass = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile0`, function (sprite, location) {
     info.changeScoreBy(20)
@@ -15,6 +16,9 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 sprites.onOverlap(SpriteKind.Blast, SpriteKind.Enemy, function (sprite, otherSprite) {
     info.changeScoreBy(1)
     sprites.destroy(otherSprite, effects.fire, 500)
+})
+sprites.onDestroyed(SpriteKind.Laser, function (sprite) {
+    music.play(music.melodyPlayable(music.smallCrash), music.PlaybackMode.InBackground)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (reload = true&& controller.A.isPressed()) {
@@ -115,7 +119,7 @@ spriteutils.onSpriteKindUpdateInterval(SpriteKind.Enemy, 500, function (sprite) 
             `, sprite, 0, 0)
         projectile2.setKind(SpriteKind.Laser)
         projectile2.setFlag(SpriteFlag.AutoDestroy, true)
-        spriteutils.setVelocityAtAngle(projectile2, spriteutils.angleFrom(mySprite, sprite) + randint(-15, 15), 80)
+        spriteutils.setVelocityAtAngle(projectile2, spriteutils.angleFrom(mySprite, sprite) + randint(-15, 15), 100)
         music.play(music.melodyPlayable(music.pewPew), music.PlaybackMode.InBackground)
     }
 })
@@ -621,6 +625,29 @@ for (let index = 0; index < 30; index++) {
     tiles.placeOnRandomTile(Enemy1, assets.tile`transparency16`)
     Enemy1.follow(Player1, 30)
 }
+let mySprite4 = sprites.create(img`
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 
+    1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    . . . . . . . 1 1 . . . . . . . 
+    `, SpriteKind.Compass)
+mySprite4.setFlag(SpriteFlag.RelativeToCamera, true)
+mySprite4.setPosition(19, 97)
+game.onUpdate(function () {
+    transformSprites.rotateSprite(mySprite4, 0 - ViewAngle)
+})
 game.onUpdate(function () {
     mySprite2 = sprites.allOfKind(SpriteKind.Enemy)._pickRandom()
     if (mySprite2.vx == 0 && mySprite2.vy == 0 && mySprite2.image.equals(img`

@@ -11,7 +11,8 @@
         "Timers": "github:microsoft/arcade-timers#v1.1.0",
         "settings-blocks": "github:microsoft/pxt-settings-blocks#v1.0.0",
         "arcade-story": "github:microsoft/arcade-storytelling#v1.0.3",
-        "carnival": "github:microsoft/arcade-carnival#v0.0.7"
+        "carnival": "github:microsoft/arcade-carnival#v0.0.7",
+        "Spacefight!": "github:mpwhite2/sprite#master"
     },
     "files": [
         "main.blocks",
@@ -33,7 +34,7 @@
     "supportedTargets": [
         "arcade"
     ],
-    "preferredEditor": "blocksprj",
+    "preferredEditor": "tsprj",
     "palette": [
         "#000000",
         "#FFFFFF",
